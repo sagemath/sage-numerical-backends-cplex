@@ -32,15 +32,18 @@ cplex_home = os.getenv("CPLEX_HOME")
 
 exts = ['so']
 if sys.platform == 'darwin':
+    cplex_platform = 'x86-64_osx'
     exts.insert(0, 'dylib')
+else:
+    cplex_platform = 'x86-64_linux'
 
 if cplex_home:
-    cplex_include_directories.append(cplex_home + "/include")
-    libdir = cplex_home + "/lib"
+    cplex_include_directories.append(cplex_home + "/include/ilcplex")
+    libdir = cplex_home + "/bin/" + cplex_platform
     cplex_lib_directories.append(libdir)
     from fnmatch import fnmatch
     for file in os.listdir(libdir):
-        if any(fnmatch(file, 'libcplex*.' + ext) for ext in exts):
+        if any(fnmatch(file, 'libcplex[0-9]*[0-9].' + ext) for ext in exts):
             cplex_libs = [os.path.splitext(file)[0][3:]]
             break
 
