@@ -16,7 +16,7 @@ from sage.env import sage_include_directories
 # For the tests
 class SageTest(TestCommand):
     def run_tests(self):
-        errno = os.system("sage -t --force-lib sage_numerical_backends_gurobi")
+        errno = os.system("sage -t --force-lib sage_numerical_backends_cplex")
         if errno != 0:
             sys.exit(1)
 
@@ -25,64 +25,53 @@ def readfile(filename):
     with open(filename, encoding='utf-8') as f:
         return f.read()
 
-gurobi_include_directories = []
-gurobi_lib_directories = []
-gurobi_libs = []
-gurobi_home = os.getenv("GUROBI_HOME")
-
-if not gurobi_home:
-    # gurobi.sh might be in PATH.  As of Gurobi 9.0 (on macOS), it is
-    # a shell script that sets (but does not export) GUROBI_HOME
-    # and then invokes a Python interpreter.
-    try:
-        gurobi_home = subprocess.check_output(". gurobi.sh -c '' && echo $GUROBI_HOME", shell=True).decode("UTF-8").strip()
-        print("Using GUROBI_HOME obtained from gurobi.sh: {}".format(gurobi_home),
-              file=sys.stderr)
-    except subprocess.CalledProcessError:
-        pass
+cplex_include_directories = []
+cplex_lib_directories = []
+cplex_libs = []
+cplex_home = os.getenv("CPLEX_HOME")
 
 exts = ['so']
 if sys.platform == 'darwin':
     exts.insert(0, 'dylib')
 
-if gurobi_home:
-    gurobi_include_directories.append(gurobi_home + "/include")
-    libdir = gurobi_home + "/lib"
-    gurobi_lib_directories.append(libdir)
+if cplex_home:
+    cplex_include_directories.append(cplex_home + "/include")
+    libdir = cplex_home + "/lib"
+    cplex_lib_directories.append(libdir)
     from fnmatch import fnmatch
     for file in os.listdir(libdir):
-        if any(fnmatch(file, 'libgurobi*.' + ext) for ext in exts):
-            gurobi_libs = [os.path.splitext(file)[0][3:]]
+        if any(fnmatch(file, 'libcplex*.' + ext) for ext in exts):
+            cplex_libs = [os.path.splitext(file)[0][3:]]
             break
 
-if not gurobi_libs:
-    print("GUROBI_HOME is not set, or it does not point to a directory with a "
-          "Gurobi installation.  Trying to link against -lgurobi", file=sys.stderr)
-    gurobi_libs = ['gurobi']
+if not cplex_libs:
+    print("CPLEX_HOME is not set, or it does not point to a directory with a "
+          "Cplex installation.  Trying to link against -lcplex", file=sys.stderr)
+    cplex_libs = ['cplex']
 else:
-    print("Using gurobi_include_directories={}, libraries={}, library_dirs={}".format(
-        gurobi_include_directories, gurobi_libs, gurobi_lib_directories), file=sys.stderr)
+    print("Using cplex_include_directories={}, libraries={}, library_dirs={}".format(
+        cplex_include_directories, cplex_libs, cplex_lib_directories), file=sys.stderr)
 
  # Cython modules
-ext_modules = [Extension('sage_numerical_backends_gurobi.gurobi_backend',
-                         sources = [os.path.join('sage_numerical_backends_gurobi',
-                                     'gurobi_backend.pyx')],
-                         include_dirs=sage_include_directories() + gurobi_include_directories,
-                         libraries=gurobi_libs,
-                         library_dirs=gurobi_lib_directories)
+ext_modules = [Extension('sage_numerical_backends_cplex.cplex_backend',
+                         sources = [os.path.join('sage_numerical_backends_cplex',
+                                     'cplex_backend.pyx')],
+                         include_dirs=sage_include_directories() + cplex_include_directories,
+                         libraries=cplex_libs,
+                         library_dirs=cplex_lib_directories)
     ]
 
 setup(
-    name="sage_numerical_backends_gurobi",
+    name="sage_numerical_backends_cplex",
     version=readfile("VERSION").strip(),
-    description="Gurobi backend for Sage MixedIntegerLinearProgram",
+    description="Cplex backend for Sage MixedIntegerLinearProgram",
     long_description = readfile("README.md"), # get the long description from the README
     long_description_content_type='text/markdown', # https://packaging.python.org/guides/making-a-pypi-friendly-readme/
-    url="https://github.com/mkoeppe/sage-numerical-backends-gurobi",
+    url="https://github.com/mkoeppe/sage-numerical-backends-cplex",
     # Author list obtained by running the following command on sage 9.0.beta9:
-    # for f in gurobi_backend.p*; do git blame -w -M -C -C --line-porcelain "$f" | grep -I '^author '; done | sort -f | uniq -ic | sort -n
+    # for f in cplex_backend.p*; do git blame -w -M -C -C --line-porcelain "$f" | grep -I '^author '; done | sort -f | uniq -ic | sort -n
     # cut off at < 10 lines of attribution.
-    author='Nathann Cohen, Martin Albrecht, Matthias Koeppe, John Perry, David Coudert, Jori Mäntysalo, Jeroen Demeyer, Erik M. Bray, Emil R. Vaughan, and others',
+    author='Nathann Cohen, David Coudert, Matthias Koeppe, Martin Albrecht, John Perry, Jeroen Demeyer, Jori Mäntysalo, Erik M. Bray, and others',
     author_email='mkoeppe@math.ucdavis.edu',
     license='GPLv2+', # This should be consistent with the LICENCE file
     classifiers=['Development Status :: 5 - Production/Stable',
@@ -100,8 +89,8 @@ setup(
     ext_modules = cythonize(ext_modules, include_path=sys.path),
     cmdclass = {'test': SageTest}, # adding a special setup command for tests
     keywords=['milp', 'linear-programming', 'optimization'],
-    packages=['sage_numerical_backends_gurobi'],
-    package_dir={'sage_numerical_backends_gurobi': 'sage_numerical_backends_gurobi'},
-    package_data={'sage_numerical_backends_gurobi': ['*.pxd']},
+    packages=['sage_numerical_backends_cplex'],
+    package_dir={'sage_numerical_backends_cplex': 'sage_numerical_backends_cplex'},
+    package_data={'sage_numerical_backends_cplex': ['*.pxd']},
     install_requires = ['sage>=8', 'sage-package', 'sphinx'],
 )
