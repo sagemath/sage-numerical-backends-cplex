@@ -1585,7 +1585,8 @@ cdef class CPLEXBackend(GenericBackend):
             sage: p.solve()
             2.0
             sage: with open(filename,'r') as f:
-            ....:     print(f.read())
+            ....:     print("Log: ", f.read())
+            Log...
             Found incumbent of value ...
             Reduced MIP has 5 rows, 5 columns, and 10 nonzeros.
             ...
