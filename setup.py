@@ -45,6 +45,9 @@ if cplex_home:
     for file in os.listdir(libdir):
         if any(fnmatch(file, 'libcplex[0-9]*[0-9].' + ext) for ext in exts):
             cplex_libs = [os.path.splitext(file)[0][3:]]
+            if sys.platform == 'darwin':
+                # the .dylib uses @rpath.
+                os.environ["LDFLAGS"] = os.environ.get("LDFLAGS", "") + " -rpath " + libdir
             break
 
 if not cplex_libs:
