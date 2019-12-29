@@ -10,13 +10,17 @@ from setuptools import setup
 from setuptools import Extension
 from setuptools.command.test import test as TestCommand # for tests
 from Cython.Build import cythonize
+from Cython.Compiler.Errors import CompileError
 from codecs import open # To open the README file with proper encoding
 from sage.env import sage_include_directories
 
 # For the tests
 class SageTest(TestCommand):
     def run_tests(self):
-        errno = os.system("sage -t --force-lib sage_numerical_backends_cplex")
+        # Passing optional=sage avoids using sage.misc.package.list_packages,
+        # which gives an error on Debian unstable as of 2019-12-27:
+        # FileNotFoundError: [Errno 2] No such file or directory: '/usr/share/sagemath/build/pkgs'
+        errno = os.system("PYTHONPATH=`pwd` sage -t --force-lib --optional=sage sage_numerical_backends_cplex")
         if errno != 0:
             sys.exit(1)
 
@@ -38,17 +42,13 @@ else:
     cplex_platform = 'x86-64_linux'
 
 if cplex_home:
-    cplex_include_directories.append(cplex_home + "/include/ilcplex")
-    libdir = cplex_home + "/bin/" + cplex_platform
+    cplex_include_directories.append(os.path.join(cplex_home, "cplex", "include", "ilcplex"))
+    libdir = os.path.join(cplex_home, "cplex", "bin", cplex_platform)
     cplex_lib_directories.append(libdir)
     from fnmatch import fnmatch
     for file in os.listdir(libdir):
         if any(fnmatch(file, 'libcplex[0-9]*[0-9].' + ext) for ext in exts):
             cplex_libs = [os.path.splitext(file)[0][3:]]
-            if sys.platform == 'darwin':
-                # the .dylib uses @rpath.
-                os.environ["LDFLAGS"] = os.environ.get("LDFLAGS", "") + " -rpath " + libdir
-            break
 
 if not cplex_libs:
     print("CPLEX_HOME is not set, or it does not point to a directory with a "
@@ -64,8 +64,36 @@ ext_modules = [Extension('sage_numerical_backends_cplex.cplex_backend',
                                      'cplex_backend.pyx')],
                          include_dirs=sage_include_directories() + cplex_include_directories,
                          libraries=cplex_libs,
-                         library_dirs=cplex_lib_directories)
+                         library_dirs=cplex_lib_directories,
+                         extra_link_args=['-Wl,-rpath,' + dir for dir in cplex_lib_directories])
     ]
+
+
+## SageMath 8.1 (included in Ubuntu bionic 18.04 LTS) does not have sage.cpython.string;
+## it was introduced in 8.2.
+compile_time_env = {'HAVE_SAGE_CPYTHON_STRING': False,
+                    'HAVE_ADD_COL_UNTYPED_ARGS': False}
+
+print("Checking whether HAVE_SAGE_CPYTHON_STRING...", file=sys.stderr)
+try:
+    import sage.cpython.string
+    compile_time_env['HAVE_SAGE_CPYTHON_STRING'] = True
+except ImportError:
+    pass
+
+## SageMath 8.7 changed the signature of add_col.
+print("Checking whether HAVE_ADD_COL_UNTYPED_ARGS...", file=sys.stderr)
+try:
+    cythonize(Extension('check_add_col_untyped_args',
+                        sources=['check_add_col_untyped_args.pyx'],
+                        include_dirs=sage_include_directories()),
+              quiet=True,
+              include_path=sys.path)
+    compile_time_env['HAVE_ADD_COL_UNTYPED_ARGS'] = True
+except CompileError:
+    pass
+
+print("Using compile_time_env: {}".format(compile_time_env), file=sys.stderr)
 
 setup(
     name="sage_numerical_backends_cplex",
@@ -92,11 +120,13 @@ setup(
                  'Programming Language :: Python :: 3.6',
                  'Programming Language :: Python :: 3.7',
                  ],
-    ext_modules = cythonize(ext_modules, include_path=sys.path),
+    ext_modules = cythonize(ext_modules, include_path=sys.path,
+                            compile_time_env=compile_time_env),
     cmdclass = {'test': SageTest}, # adding a special setup command for tests
     keywords=['milp', 'linear-programming', 'optimization'],
     packages=['sage_numerical_backends_cplex'],
     package_dir={'sage_numerical_backends_cplex': 'sage_numerical_backends_cplex'},
     package_data={'sage_numerical_backends_cplex': ['*.pxd']},
-    install_requires = ['sage>=8', 'sage-package', 'sphinx'],
+    install_requires = [# 'sage>=8',    ### On too many distributions, sage is actually not known as a pip package
+                        'sphinx'],
 )
