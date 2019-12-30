@@ -82,10 +82,24 @@ To select the `'CPLEX'` solver explicitly as the default MIP backend, additional
 
     sage: default_mip_solver('CPLEX')
 
-To make these setting permanent, add the above 2 + 1 commands to your `~/.sage/init.sage` file.
+To make these settings permanent, add the above 2 + 1 commands to your `~/.sage/init.sage` file.
 Note that this setting will not affect doctesting (`sage -t`) because this file is ignored in doctesting mode.
 
-## Overriding the default solver for doctesting
+## Running doctests
+
+To run the (limited) testsuite of this package, use:
+
+    $ sage setup.py test
+
+If no Gurobi license is available, the testing is skipped without error.
+
+To run the Sage testsuite with the default MIP solver set to the backend provided by this package, use:
+
+    $ sage setup.py check_sage_testsuite
+
+If no Gurobi license is available, the testing is skipped without error.
+
+## Overriding the default solver by patching the Sage installation
 
 Another method is to patch the module in permanently to the sage installation (at your own risk).
 This method will affect doctesting.
