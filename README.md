@@ -91,13 +91,9 @@ To run the (limited) testsuite of this package, use:
 
     $ sage setup.py test
 
-If no Gurobi license is available, the testing is skipped without error.
-
 To run the Sage testsuite with the default MIP solver set to the backend provided by this package, use:
 
     $ sage setup.py check_sage_testsuite
-
-If no Gurobi license is available, the testing is skipped without error.
 
 ## Overriding the default solver by patching the Sage installation
 
