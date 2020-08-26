@@ -11,7 +11,7 @@ The present standalone Python package `sage-numerical-backends-cplex` has been c
 
 Sage ticket https://trac.sagemath.org/ticket/28175 uses this package to remove the in-tree version of `CPLEXBackend`.
 
-## Installation
+## Installation of CPLEX
 
 [CPLEX](https://www.ibm.com/products/ilog-cplex-optimization-studio)
 is proprietary software.  It is available for free for researchers and students through IBM's Academic Initiative.
@@ -33,7 +33,19 @@ Now verify that the CPLEX binary that you will find in the subdirectory ``cplex/
 
 (Alternatively, set compiler/linker flags (or use symbolic links) so that `cplex.h` and `libcplex.so` can be found.)
 
-Now install this package from PyPI using
+## Installation of this package in SageMath 9.1 or later
+
+This package is prepared as an optional Sage package (SPKG) in SageMath 9.1 or later.
+To install it, use
+
+        $ sage -i sage_numerical_backends_cplex
+
+After a successful installation, Sage will automatically make this new backend
+the default MIP solver.
+
+## Installation of this package in older versions of SageMath
+
+Install this package from PyPI using
 
     $ sage -python -m pip install sage-numerical-backends-cplex
 
@@ -47,7 +59,7 @@ or from GitHub using
 
 (See [`build.yml` in the related package sage-numerical-backends-coin package](https://github.com/mkoeppe/sage-numerical-backends-coin/blob/master/.github/workflows/build.yml) for details about package prerequisites on various systems.)
 
-## Using this package
+### Using this package in older versions of SageMath
 
 To obtain a solver (backend) instance:
 
@@ -85,17 +97,7 @@ To select the `'CPLEX'` solver explicitly as the default MIP backend, additional
 To make these settings permanent, add the above 2 + 1 commands to your `~/.sage/init.sage` file.
 Note that this setting will not affect doctesting (`sage -t`) because this file is ignored in doctesting mode.
 
-## Running doctests
-
-To run the (limited) testsuite of this package, use:
-
-    $ sage setup.py test
-
-To run the Sage testsuite with the default MIP solver set to the backend provided by this package, use:
-
-    $ sage setup.py check_sage_testsuite
-
-## Overriding the default solver by patching the Sage installation
+### Overriding the default solver in older versions of SageMath by patching the Sage installation
 
 Another method is to patch the module in permanently to the sage installation (at your own risk).
 This method will affect doctesting.
@@ -111,3 +113,14 @@ Verify with [`check_get_solver_with_name.py`](check_get_solver_with_name.py) tha
 
     $ sage -c 'load("check_get_solver_with_name.py")'
     Success: get_solver(solver='cplex') gives <sage_numerical_backends_cplex.cplex_backend.CPLEXBackend object at 0x7f8f20218528>
+
+## Running doctests
+
+To run the (limited) testsuite of this package, use:
+
+    $ sage setup.py test
+
+To run the Sage testsuite with the default MIP solver set to the backend provided by this package, use:
+
+    $ sage setup.py check_sage_testsuite
+
