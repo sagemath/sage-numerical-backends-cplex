@@ -2,14 +2,14 @@
 
 [![PyPI](https://img.shields.io/pypi/v/sage-numerical-backends-cplex)](https://pypi.org/project/sage-numerical-backends-cplex/ "PyPI: sage-numerical-backends-cplex")
 
-`CPLEXBackend` has previously been available as part of the [SageMath](http://www.sagemath.org/) source tree,
-from which it is built as an "optional extension" if the proprietary CPLEX library and header files have been symlinked into `$SAGE_LOCAL` manually.
+Prior to SageMath 9.1, `CPLEXBackend` was available as part of the [SageMath](http://www.sagemath.org/) source tree,
+from which it would be built as an "optional extension" if the proprietary CPLEX library and header files have been symlinked into `$SAGE_LOCAL` manually.
 
 Because of the proprietary nature of the CPLEX software, `CPLEXBackend` is not available in any binary distributions of SageMath.
 
-The present standalone Python package `sage-numerical-backends-cplex` has been created from the SageMath sources, version 9.0.beta10.  It can be installed on top of various Sage installations using pip, including older versions of Sage such as 8.1 (as shipped by Ubuntu bionic 18.04LTS).
+The present standalone Python package `sage-numerical-backends-cplex` has been created from the SageMath sources, version 9.0.beta10; the in-tree version of `CPLEXBackend` has been removed in Sage ticket https://trac.sagemath.org/ticket/28175.  
 
-Sage ticket https://trac.sagemath.org/ticket/28175 uses this package to remove the in-tree version of `CPLEXBackend`.
+The package can be installed on top of various Sage installations using pip, including older versions of Sage such as 8.1 (as shipped by Ubuntu bionic 18.04LTS).  SageMath 9.1 and later makes the package available as an optional Sage package (SPKG).
 
 ## Installation of CPLEX
 
