@@ -251,7 +251,7 @@ cdef class CPLEXBackend(GenericBackend):
 
         return n
 
-    cpdef set_variable_type(self, int variable, int vtype):
+    cpdef set_variable_type(self, int variable, int vtype) noexcept:
         r"""
         Sets the type of a variable
 
@@ -291,7 +291,7 @@ cdef class CPLEXBackend(GenericBackend):
         status = CPXchgctype(self.env, self.lp, 1, &variable, &type)
         check(status)
 
-    cpdef set_sense(self, int sense):
+    cpdef set_sense(self, int sense) noexcept:
         r"""
         Sets the direction (maximization/minimization).
 
@@ -315,7 +315,7 @@ cdef class CPLEXBackend(GenericBackend):
 
         CPXchgobjsen(self.env, self.lp, -sense)
 
-    cpdef objective_coefficient(self, int variable, coeff=None):
+    cpdef objective_coefficient(self, int variable, coeff=None) noexcept:
         """
         Set or get the coefficient of a variable in the objective function
 
@@ -352,7 +352,7 @@ cdef class CPLEXBackend(GenericBackend):
             status = CPXchgobj(self.env, self.lp, 1, &variable, &value)
             check(status)
 
-    cpdef problem_name(self, name=None):
+    cpdef problem_name(self, name=None) noexcept:
         r"""
         Returns or defines the problem's name
 
@@ -388,7 +388,7 @@ cdef class CPLEXBackend(GenericBackend):
             check(status)
 
 
-    cpdef set_objective(self, list coeff, d = 0.0):
+    cpdef set_objective(self, list coeff, d = 0.0) noexcept:
         r"""
         Sets the objective function.
 
@@ -440,7 +440,7 @@ cdef class CPLEXBackend(GenericBackend):
         self.obj_constant_term = d
 
 
-    cpdef set_verbosity(self, int level):
+    cpdef set_verbosity(self, int level) noexcept:
         r"""
         Sets the log (verbosity) level
 
@@ -464,7 +464,7 @@ cdef class CPLEXBackend(GenericBackend):
             status = CPXsetintparam (self.env, CPX_PARAM_SCRIND, CPX_ON)
             check(status)
 
-    cpdef remove_constraint(self, int i):
+    cpdef remove_constraint(self, int i) noexcept:
         r"""
         Remove a constraint from self.
 
@@ -494,7 +494,7 @@ cdef class CPLEXBackend(GenericBackend):
         status = CPXdelrows(self.env, self.lp, i, i)
         check(status)
 
-    cpdef add_linear_constraints(self, int number, lower_bound, upper_bound, names = None):
+    cpdef add_linear_constraints(self, int number, lower_bound, upper_bound, names = None) noexcept:
         """
         Add ``'number`` linear constraints.
 
@@ -573,7 +573,7 @@ cdef class CPLEXBackend(GenericBackend):
         sig_free(c_names)
         check(status)
 
-    cpdef add_linear_constraint(self, coefficients, lower_bound, upper_bound, name = None):
+    cpdef add_linear_constraint(self, coefficients, lower_bound, upper_bound, name = None) noexcept:
         """
         Add a linear constraint.
 
@@ -671,7 +671,7 @@ cdef class CPLEXBackend(GenericBackend):
         sig_free(c_indices)
         sig_free(c_row)
 
-    cpdef row(self, int index):
+    cpdef row(self, int index) noexcept:
         r"""
         Returns a row
 
@@ -721,7 +721,7 @@ cdef class CPLEXBackend(GenericBackend):
 
         return (indices, values)
 
-    cpdef row_bounds(self, int index):
+    cpdef row_bounds(self, int index) noexcept:
         r"""
         Returns the bounds of a specific constraint.
 
@@ -769,7 +769,7 @@ cdef class CPLEXBackend(GenericBackend):
             check(status)
             return (value, value + rng)
 
-    cpdef col_bounds(self, int index):
+    cpdef col_bounds(self, int index) noexcept:
         r"""
         Returns the bounds of a specific variable.
 
@@ -809,7 +809,7 @@ cdef class CPLEXBackend(GenericBackend):
         return (None if lb <= -CPX_INFBOUND else lb,
                 None if ub >= +CPX_INFBOUND else ub)
 
-    cpdef add_col(self, indices, coeffs):
+    cpdef add_col(self, indices, coeffs) noexcept:
         r"""
         Adds a column.
 
@@ -958,7 +958,7 @@ cdef class CPLEXBackend(GenericBackend):
 
         return 0
 
-    cpdef get_objective_value(self):
+    cpdef get_objective_value(self) noexcept:
         r"""
         Returns the value of the objective function.
 
@@ -999,7 +999,7 @@ cdef class CPLEXBackend(GenericBackend):
         return value + <double>self.obj_constant_term
 
 
-    cpdef best_known_objective_bound(self):
+    cpdef best_known_objective_bound(self) noexcept:
         r"""
         Return the value of the currently best known bound.
 
@@ -1042,7 +1042,7 @@ cdef class CPLEXBackend(GenericBackend):
 
         return value + <double>self.obj_constant_term
 
-    cpdef get_relative_objective_gap(self):
+    cpdef get_relative_objective_gap(self) noexcept:
         r"""
         Return the relative objective gap of the best known solution.
 
@@ -1082,7 +1082,7 @@ cdef class CPLEXBackend(GenericBackend):
 
         return value
 
-    cpdef get_variable_value(self, int variable):
+    cpdef get_variable_value(self, int variable) noexcept:
         r"""
         Returns the value of a variable given by the solver.
 
@@ -1119,7 +1119,7 @@ cdef class CPLEXBackend(GenericBackend):
 
         return value if (status == 3003 or ctype == 'C') else int(round(value))
 
-    cpdef int ncols(self):
+    cpdef int ncols(self) noexcept:
         r"""
         Returns the number of columns/variables.
 
@@ -1137,7 +1137,7 @@ cdef class CPLEXBackend(GenericBackend):
 
         return CPXgetnumcols(self.env, self.lp)
 
-    cpdef int nrows(self):
+    cpdef int nrows(self) noexcept:
         r"""
         Returns the number of rows/constraints.
 
@@ -1154,7 +1154,7 @@ cdef class CPLEXBackend(GenericBackend):
 
         return CPXgetnumrows(self.env, self.lp)
 
-    cpdef row_name(self, int index):
+    cpdef row_name(self, int index) noexcept:
         r"""
         Return the ``index`` th row name
 
@@ -1187,7 +1187,7 @@ cdef class CPLEXBackend(GenericBackend):
 
         return s
 
-    cpdef col_name(self, int index):
+    cpdef col_name(self, int index) noexcept:
         r"""
         Returns the ``index`` th col name.
 
@@ -1220,7 +1220,7 @@ cdef class CPLEXBackend(GenericBackend):
         sig_free(n)
         return s
 
-    cpdef bint is_variable_binary(self, int index):
+    cpdef bint is_variable_binary(self, int index) noexcept:
         r"""
         Tests whether the given variable is of binary type.
 
@@ -1256,7 +1256,7 @@ cdef class CPLEXBackend(GenericBackend):
         return ctype == 'B'
 
 
-    cpdef bint is_variable_integer(self, int index):
+    cpdef bint is_variable_integer(self, int index) noexcept:
         r"""
         Tests whether the given variable is of integer type.
 
@@ -1329,7 +1329,7 @@ cdef class CPLEXBackend(GenericBackend):
         return ctype == 'C'
 
 
-    cpdef bint is_maximization(self):
+    cpdef bint is_maximization(self) noexcept:
         r"""
         Tests whether the problem is a maximization
 
@@ -1346,7 +1346,7 @@ cdef class CPLEXBackend(GenericBackend):
 
         return -1 == CPXgetobjsen(self.env, self.lp)
 
-    cpdef variable_upper_bound(self, int index, value = False):
+    cpdef variable_upper_bound(self, int index, value = False) noexcept:
         r"""
         Returns or defines the upper bound on a variable
 
@@ -1398,7 +1398,7 @@ cdef class CPLEXBackend(GenericBackend):
             status = CPXchgbds(self.env, self.lp, 1, &index, &x, &c_value)
             check(status)
 
-    cpdef variable_lower_bound(self, int index, value = False):
+    cpdef variable_lower_bound(self, int index, value = False) noexcept:
         r"""
         Returns or defines the lower bound on a variable
 
@@ -1450,7 +1450,7 @@ cdef class CPLEXBackend(GenericBackend):
             status = CPXchgbds(self.env, self.lp, 1, &index, &x, &c_value)
             check(status)
 
-    cpdef write_lp(self, filename):
+    cpdef write_lp(self, filename) noexcept:
         r"""
         Writes the problem to a .lp file
 
@@ -1475,7 +1475,7 @@ cdef class CPLEXBackend(GenericBackend):
         status = CPXwriteprob(self.env, self.lp, filename, ext)
         check(status)
 
-    cpdef write_mps(self, filename, int modern):
+    cpdef write_mps(self, filename, int modern) noexcept:
         r"""
         Writes the problem to a .mps file
 
@@ -1500,7 +1500,7 @@ cdef class CPLEXBackend(GenericBackend):
         status = CPXwriteprob(self.env, self.lp, filename, ext)
         check(status)
 
-    cpdef __copy__(self):
+    cpdef __copy__(self) noexcept:
         r"""
         Returns a copy of self.
 
@@ -1527,7 +1527,7 @@ cdef class CPLEXBackend(GenericBackend):
 
         return p
 
-    cpdef solver_parameter(self, name, value = None):
+    cpdef solver_parameter(self, name, value = None) noexcept:
         """
         Return or define a solver parameter
 
