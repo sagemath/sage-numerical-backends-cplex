@@ -1291,7 +1291,7 @@ cdef class CPLEXBackend(GenericBackend):
         return ctype == 'I'
 
 
-    cpdef bint is_variable_continuous(self, int index):
+    cpdef bint is_variable_continuous(self, int index) noexcept:
         r"""
         Tests whether the given variable is of continuous/real type.
 
