@@ -219,7 +219,7 @@ cdef extern from "cplex.h":
      # CONSTANTS
      int CPX_ON = 1
      int CPX_PARAM_SCRIND = 1035
-     int CPX_INFBOUND = 1.0E+20
+     double CPX_INFBOUND = 1.0E+20
      int CPX_PARAM_POPULATELIM = 2108
      int CPX_PARAM_SOLNPOOLGAP = 2105
      int CPX_PARAM_SOLNPOOLINTENSITY = 2107
