@@ -55,9 +55,9 @@ or from a checked out source tree using
 
 or from GitHub using
 
-    $ sage -python -m pip install git+https://github.com/mkoeppe/sage-numerical-backends-cplex
+    $ sage -python -m pip install git+https://github.com/sagemath/sage-numerical-backends-cplex
 
-(See [`build.yml` in the related package sage-numerical-backends-coin package](https://github.com/mkoeppe/sage-numerical-backends-coin/blob/master/.github/workflows/build.yml) for details about package prerequisites on various systems.)
+(See [`build.yml` in the related package sage-numerical-backends-coin package](https://github.com/sagemath/sage-numerical-backends-coin/blob/master/.github/workflows/build.yml) for details about package prerequisites on various systems.)
 
 ### Using this package in older versions of SageMath
 
