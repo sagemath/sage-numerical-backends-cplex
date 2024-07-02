@@ -2,6 +2,7 @@
 ## -*- encoding: utf-8 -*-
 
 import os
+import platform
 import sys
 import subprocess
 from setuptools import setup
@@ -39,11 +40,12 @@ cplex_libs = []
 cplex_home = os.getenv("CPLEX_HOME")
 
 exts = ['so']
+machine = platform.machine().replace('_', '-')
 if sys.platform == 'darwin':
-    cplex_platform = 'x86-64_osx'
+    cplex_platform = machine + '_osx'
     exts.insert(0, 'dylib')
 else:
-    cplex_platform = 'x86-64_linux'
+    cplex_platform = machine + '_linux'
 
 if cplex_home:
     cplex_include_directories.append(os.path.join(cplex_home, "cplex", "include", "ilcplex"))
